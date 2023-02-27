@@ -1,7 +1,7 @@
-<?php    //работающий вариант
+<?php    //работающий вариант, лишние ссылки, добавить в $link id и по нему смотреть в 1 цикле
 $query = $_POST['query'];
-$link = mysqli_connect("localhost", "username", "password", "dbname"); //серьёзно, вы думали тут будет пароль?
-$sql = "SELECT id, name, description FROM informationsystem_items WHERE name LIKE '%$query%' OR description LIKE '%$query%' OR text LIKE '%$query%'";
+$link = mysqli_connect("localhost", "s90297u0_cbs", "xar0h.KJIbIK", "s90297u0_cbs"); //серьёзно, вы думали тут будет пароль?
+$sql = "SELECT id, name, description, path FROM informationsystem_items WHERE name LIKE '%$query%' OR description LIKE '%$query%' OR text LIKE '%$query%'";
 $query = trim($query);
 $query = mysqli_real_escape_string($link,$query);
 $query = htmlspecialchars($query);
@@ -32,11 +32,32 @@ else {
         else
         {
             while ($row = mysqli_fetch_row($result)){
-		$sqlink0 = "SELECT path, name FROM structures WHERE id = (SELECT structure_id FROM informationsystems WHERE id = (SELECT informationsystem_id FROM informationsystem_items WHERE id LIKE '$row[0]'))";
-		$qlink0 = mysqli_query($link, $sqlink0);
-		$row0 = mysqli_fetch_row($qlink0);
-       	  print("<srch>"."<a href=../$row0[0]/$row[0] target='_blank'>"."<u>".$row[1]."</u>"."</a>"."&nbsp;&nbsp;&nbsp;&nbsp;".$row0[1].$row[2]."<br />"."</srch>"); //выводим строки через print
-				}
+			$sqlink0 = "SELECT path, parent_id, name FROM structures WHERE id = (SELECT structure_id FROM informationsystems WHERE id = (SELECT informationsystem_id FROM informationsystem_items WHERE id LIKE '$row[0]'))";
+			$qlink0 = mysqli_query($link, $sqlink0);
+			$row0 = mysqli_fetch_row($qlink0);
+			if ($row0[1] == 0)
+			{
+			if ($row[1] == '')
+			{
+			print("<srch>"."<a href=../$row0[0]/$row[3] target='_blank'>"."<u>"."Читать"."</u>"."</a>"."<br />".$row0[2].$row[2]."<br />"."</srch>"); //выводим строки через print
+			}
+			else
+			{
+			print("<srch>"."<a href=../$row0[0]/$row[3] target='_blank'>"."<u>".$row[1]."</u>"."</a>"."<br />".$row0[2].$row[2]."<br />"."</srch>"); //выводим строки через print
+			}
+			}
+			else
+			{
+			if ($row[1] == '')
+			{
+			print("<srch>"."<a href=../$row0[1]/$row0[0]/$row[3] target='_blank'>"."<u>"."Читать"."</u>"."</a>"."<br />".$row0[2].$row[2]."<br />"."</srch>"); //выводим строки через print
+			}
+			else
+			{
+            print("<srch>"."<a href=../$row0[1]/$row0[0]/$row[3] target='_blank'>"."<u>".$row[1]."</u>"."</a>"."<br />".$row0[2].$row[2]."<br />"."</srch>"); //выводим строки через print
+			}
+			}
+			}
         }
     }
     else
